@@ -1,10 +1,11 @@
-import React from 'react';
+import React,{ useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { ScreenContainer, ButtonEl, TransButtonEl } from '../components/elements';
 import { Modal, Portal, RadioButton, Provider } from 'react-native-paper';
 
 import { useSelector, useDispatch } from 'react-redux';
+import { createProducts } from '../app/features/products/ProductSlice';
 import { getProductCategories } from '../app/features/products/productCategorySlice';
 import { ActivityIndicator } from 'react-native-paper';
 
@@ -38,31 +39,150 @@ const CreateProduct = ({navigation}) => {
             setCategory([...category, value]);
         }
     }
+    const [formFields, setFormFields] = useState({
+        productName: '',
+        regularPrice: '',
+        salePrice: '',
+        shortDescription: ''
+    });
+
+    const [errorMsg, setErrorMsg] = useState({
+        productNameError: false,
+        regularPriceError: false,
+        salePriceError: false,
+        shortDescriptionError: false,
+    });
+
+    const onSubmitHandler = () => {
+        //validate
+        setErrorMsg({
+            productNameError: false,
+            regularPriceError: false,
+            salePriceError: false,
+            shortDescriptionError: false,
+        });
+
+        if(formFields.productName === ''){
+            setErrorMsg(preState => {
+                return {...preState,productNameError:'Product name cannot be empty'}
+            });
+        }
+
+        if(formFields.regularPrice === '' || isNaN(formFields.regularPrice)){
+            setErrorMsg(preState => {
+                return {...preState,regularPriceError:'Enter a valid regular price'}
+            });
+        }
+
+        if(isNaN(formFields.salePrice)){
+            setErrorMsg(preState => {
+                return {...preState,salePriceError:'Enter a valid sale price'}
+            });
+        }
+
+        if(formFields.shortDescription === ''){
+            setErrorMsg(preState => {
+                return {...preState,shortDescriptionError:'Enter a short description'}
+            });
+        }
+
+
+        if( errorMsg.productNameError ||
+            errorMsg.regularPriceError ||
+            errorMsg.salePriceError ||
+            errorMsg.shortDescriptionError )
+        {
+            console.log('some error');
+            return false;
+        }else{
+            console.log('not error');
+        }
+
+
+        const productCategories = category.map(cat=>{
+            return {
+                "id": cat.id,
+                "name":cat.name,
+                "slug":cat.slug        
+            }
+        });
+
+        const productObj = {
+            'name': formFields.productName,
+            'price': formFields.regularPrice,
+            "regular_price": formFields.regularPrice,
+            'sale_price': formFields.salePrice,
+            'short_description': formFields.shortDescription,
+            'type': "simple",
+            'categories': productCategories,
+            "status": "pending",
+            "meta_data": [
+                {
+                    "key": "product_by_app",
+                    "value": "yes"
+                },
+            ],
+        }
+
+        console.log('new products',productObj);
+
+        dispatch(createProducts(productObj));
+        
+    }
+
     return (
         <ScreenContainer>
             <TextInput
                 mode="flat"
                 label="Product Name"
                 style={styles.inputStyle}
+                value={formFields.productName}
+                onChangeText={(e)=>{
+                    setFormFields(preState => {
+                        return {...preState,productName:e}
+                    })
+                }}
             />
+            <Text style={styles.errorStyle}>{errorMsg.productNameError}</Text>
             <TextInput
                 mode="flat"
                 label="Regular Price"
                 style={styles.inputStyle}
                 keyboardType='numeric'
+                value={formFields.regularPrice}
+                onChangeText={(e)=>{
+                    setFormFields(preState => {
+                        return {...preState,regularPrice:e}
+                    })
+                }}
             />
+            <Text style={styles.errorStyle}>{errorMsg.regularPriceError}</Text>
             <TextInput
                 mode="flat"
                 label="Sale Price"
                 style={styles.inputStyle}
                 keyboardType='numeric'
+                value={formFields.salePrice}
+                onChangeText={(e)=>{
+                    setFormFields(preState => {
+                        return {...preState,salePrice:e}
+                    })
+                }}
             />
+            <Text style={styles.errorStyle}>{errorMsg.salePriceError}</Text>
             <TextInput
                 mode="flat"
                 label="Short Description"
                 multiline={true}
                 style={{...styles.inputStyle, minHeight: 100}}
+                value={formFields.shortDescription}
+                onChangeText={(e)=>{
+                    setFormFields(preState => {
+                        return {...preState,shortDescription:e}
+                    })
+                }}
             />
+            <Text style={styles.errorStyle}>{errorMsg.shortDescriptionError}</Text>
             <View style={{flexDirection: 'row',}}>
                 <TransButtonEl 
                     label='Select Category'
@@ -77,7 +197,7 @@ const CreateProduct = ({navigation}) => {
             <Text style={{color: '#777'}}>Note: Only Simple Products can be created in this page. To create other product types login through the website.</Text>
             <ButtonEl 
                 label='Create Product'
-                onPress={hideModal}
+                onPress={onSubmitHandler}
                 style={styles.createProductButton}
             />
             <Provider>
@@ -117,7 +237,8 @@ const styles = StyleSheet.create({
     inputStyle: {
         marginHorizontal: 5,
         marginVertical: 10,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        marginBottom: 0
     },
     categoryStyle: {
         flex:1,
@@ -143,6 +264,13 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginVertical: 20,
         borderRadius: 100
+    },
+    errorStyle: {
+        color: 'red',
+        marginLeft: 7,
+        marginTop:0,
+        marginBottom: 5,
+        fontSize: 12
     }
 });
 

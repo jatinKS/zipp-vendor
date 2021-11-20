@@ -34,12 +34,46 @@ export const getProducts = createAsyncThunk(
     }
 );
 
+export const createProducts = createAsyncThunk(
+    'products/create',
+    async ( obj, { dispatch, getState, fulfillWithValue, rejectWithValue } ) => {
+        const token = getState().user.userInfo.token;
+
+        try{
+            const response = await fetch(
+                "https://zippgrocery.com/wp-json/wcfmmp/v1/products/",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(obj)
+                }
+            );
+            let data = await response.json();
+            console.log('new created product',data);
+            if(response.status === 200 ){
+                return data;
+            }else{
+                return thunkAPI.rejectWithValue(data);
+            }
+        }catch(e){
+            return thunkAPI.rejectWithValue(e.response.data);
+        }
+    }
+);
+
 const productSlice = createSlice({
     name: 'products',
     initialState: {
         isProductLoadidng: false,
         productsDetails: false,
-        error: ''
+        error: '',
+
+        isCreateProductLoading: false,
+        createdProduct: false,
+        createProductError: ''
     },
     reducers: {
 
@@ -56,6 +90,18 @@ const productSlice = createSlice({
             state.isProductLoadidng = false;
             state.error = payload;
         },
+
+        [createProducts.pending]: (state) => {
+            state.isCreateProductLoading = true;
+        },
+        [createProducts.fulfilled]:(state, { payload }) => {
+            state.isCreateProductLoading = false;
+            state.createdProduct = payload;
+        },
+        [createProducts.rejected]:(state, { payload }) => {
+            state.createProducts = false;
+            state.createProductError = payload;
+        }
     }
 });
 

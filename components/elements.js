@@ -5,12 +5,17 @@ import {
     StyleSheet,
     TouchableOpacity,
     TouchableHighlight,
+    TouchableWithoutFeedback,
     Text,
     Image
 } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { 
+    useTheme,
+    Paragraph,
+    Caption
+} from 'react-native-paper';
 import { FontAwesome, Octicons, Feather } from '@expo/vector-icons';
-
+import { WebView } from 'react-native-webview';
 const ScreenContainer = (props) => {
     return (
         <View style={[props.style,styles.screenContainerStyles]}>
@@ -85,6 +90,9 @@ const ProductEl = ({ product, onPress }) => {
                             <Text style={{color: '#9e9e9e', fontWeight: '600'}}>${product.price.toFixed(2)}</Text>
                         </Text>
                     </View>
+                    <Text style={{alignSelf: 'flex-end', marginBottom: 5, marginRight: 5,fontWeight: '400'}}>
+                        {ucwords(product.type)}
+                    </Text>
                 </View>
             </Card>
         </TouchableOpacity>
@@ -140,6 +148,33 @@ const OrderEl = ({order, onPress }) => {
     )
 }
 
+const NotificationEl = ({ notification }) => {
+    console.log(notification.message);
+    return (
+        <Card style={styles.productWrap}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Feather name="clock" size={1} color="black" style={{marginRight: 5}} />
+                <Paragraph style={{fontWeight: '600'}}>{notification.message}</Paragraph>
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Feather name="clock" size={16} color="black" style={{marginRight: 5}} />
+                    <Caption>{notification.created}</Caption>
+                </View>
+                <View style={{backgroundColor: 'green', justifyContent: 'center', borderRadius: 100, paddingHorizontal: 10}}>
+                    <Text>{notification.message_type}</Text>
+                </View>
+            </View>
+        </Card>
+    )
+}
+
+
+export function ucwords (str) {
+    return (str + '').replace(/^([a-z])|\s+([a-z])/g, function ($1) {
+        return $1.toUpperCase();
+    });
+}
 
 const styles = StyleSheet.create({
     elMarginVer: 5,
@@ -201,4 +236,13 @@ const styles = StyleSheet.create({
         borderRadius: 100,
     }
 });
-export { ScreenContainer, Card, InputEl, ButtonEl, TransButtonEl, ProductEl, OrderEl };
+export { 
+    ScreenContainer,
+    Card,
+    InputEl,
+    ButtonEl,
+    TransButtonEl,
+    ProductEl,
+    OrderEl,
+    NotificationEl 
+};

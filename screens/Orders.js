@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useIsFocused } from "@react-navigation/native";
 import { logout } from '../app/features/users/UserSlice';
 import { getOrders } from '../app/features/orders/OrderSlicer';
-import { Surface } from 'react-native-paper';
+import { Surface, ActivityIndicator } from 'react-native-paper';
 
 import { ScreenContainer, OrderEl } from '../components/elements';
 
@@ -15,7 +15,7 @@ const Orders = ({ navigation }) => {
     const isFocused = useIsFocused();
     const dispatch = useDispatch();
 
-    const { ordersDetails } = useSelector(state => state.orders );
+    const { isOrderLoading, ordersDetails, error } = useSelector(state => state.orders);
 
     const orders = ordersDetails;
 
@@ -55,11 +55,15 @@ const Orders = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
             <ScreenContainer>
-                <FlatList
-                    data={orders}
-                    renderItem={renderItem}
-                    keyExtractor={item => item.id}
-                />
+                {isOrderLoading &&  <ActivityIndicator animating={true} /> }
+                {ordersDetails && (
+                    <FlatList
+                        data={orders}
+                        renderItem={renderItem}
+                        keyExtractor={item => item.id}
+                    />
+                )}
+                
             </ScreenContainer>
         </View>
       );

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "946626150189",
+    "project_id": "zipp-store-manager-f9b47",
+    "storage_bucket": "zipp-store-manager-f9b47.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:946626150189:android:efb1289f5d32429109dda4",
+        "android_client_info": {
+          "package_name": "com.zippgrocery.ZippgroceryVendor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "946626150189-8smgqgpbb65rtnlu7aj0a2da0ts1vntm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBus6p2tONP95veo8mlsXjAXYxO5wK6JuM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "946626150189-8smgqgpbb65rtnlu7aj0a2da0ts1vntm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

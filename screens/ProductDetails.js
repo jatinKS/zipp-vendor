@@ -10,10 +10,8 @@ import { ActivityIndicator } from 'react-native-paper';
 import { WebView } from 'react-native-webview';
 const ProductDetails = ({ navigation, route }) => {
     const product = route.params.product;
-    console.clear();
-    console.log('==============================');
-    console.log('product', product);
-    console.log('==============================');
+    const productType = product.type;
+
 
     const { isProductCategoryLoadidng, productCategories, error } = useSelector( state => state.productCategories );
     const dispatch = useDispatch();
@@ -44,7 +42,16 @@ const ProductDetails = ({ navigation, route }) => {
         }
     }
 
-    const [productName,setProductName] = useState(product.name);
+    const [formFields, setFormFields] = useState({
+        productName: product.name,
+        regularPrice: product.price,
+        salePrice: product.sale_price,
+    }); 
+    console.log(formFields);
+    /* 
+        variable
+        simple 
+    */
 
     return (
         <ScreenContainer>
@@ -52,20 +59,36 @@ const ProductDetails = ({ navigation, route }) => {
                 mode="flat"
                 label="Product Name"
                 style={styles.inputStyle}
-                value={productName}
-                onChangeText={setProductName}
+                value={formFields.productName}
+                onChangeText={(e)=>{
+                    setFormFields(preState => {
+                        return {...preState,productName:e}
+                    })
+                }}
             />
             <TextInput
                 mode="flat"
                 label="Regular Price"
                 style={styles.inputStyle}
                 keyboardType='numeric'
+                value={formFields.regularPrice.toString()}
+                onChangeText={(e)=>{
+                    setFormFields(preState => {
+                        return {...preState,regularPrice:e}
+                    })
+                }}
             />
             <TextInput
                 mode="flat"
                 label="Sale Price"
                 style={styles.inputStyle}
                 keyboardType='numeric'
+                value={formFields.salePrice.toString()}
+                onChangeText={(e)=>{
+                    setFormFields(preState => {
+                        return {...preState,salePrice:e}
+                    })
+                }}
             />
             <TextInput
                 mode="flat"
@@ -90,18 +113,6 @@ const ProductDetails = ({ navigation, route }) => {
                 onPress={hideModal}
                 style={styles.createProductButton}
             />
-            <ScrollView style={{flex: 1}}>
-                <View style={{flex: 1,height: 200}}>
-                    <TouchableWithoutFeedback>
-                    <WebView
-                        style={styles.container}
-                        originWhitelist={['*']}
-                        source={{ html: product.short_description }}
-                    />
-                        {/* <Text>{product.short_description}</Text> */}
-                    </TouchableWithoutFeedback>
-                </View>
-            </ScrollView>
             <Provider>
                 <Portal>
                     <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>

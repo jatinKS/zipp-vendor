@@ -19,12 +19,16 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Fontisto, Octicons } from '@expo/vector-icons';
 import { logout } from '../app/features/users/UserSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export function DrawerContent(props) {
+    const { isUserSettingsLoading, userSettings, error } = useSelector( state => state.userSettings );
     const dispatch = useDispatch();
     
     const paperTheme = useTheme();
+
+    /* console.log('settings: ',userSettings); */
+
     return(
         <View style={{flex:1}}>
             <DrawerContentScrollView {...props}>
@@ -37,9 +41,11 @@ export function DrawerContent(props) {
                                 }}
                                 size={50}
                             />
-                            <View style={{marginLeft:15, flexDirection:'column'}}>
-                                <Title style={styles.title}>John Doe</Title>
-                                <Caption style={styles.caption}>@j_doe</Caption>
+                            <View style={{flex: 1, marginLeft:15, flexDirection:'column'}}>
+                                <View style={{flexDirection: 'row'}}>
+                                    <Title style={{...styles.title, flex: 1, flexWrap: 'wrap'}}>{userSettings.store_name}</Title>
+                                </View>
+                                <Caption style={styles.caption}>{userSettings.user_name}</Caption>
                             </View>
                         </View>
 
@@ -69,6 +75,13 @@ export function DrawerContent(props) {
                             )}
                             label="Products"
                             onPress={() => {props.navigation.navigate('Products')}}
+                        />
+                        <DrawerItem 
+                            icon={({color, size}) => (
+                                <Octicons name="bell" size={24} color="black" />
+                            )}
+                            label="Notifications"
+                            onPress={() => {props.navigation.navigate('Notifications')}}
                         />
                     </Drawer.Section>
                     {/* <Drawer.Section title="Preferences">

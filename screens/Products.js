@@ -38,7 +38,9 @@ const Products = ({ navigation }) => {
         const productObj = {
             name: item.name,
             image: url,
-            price: item.price
+            price: item.price,
+            priceHTML: item.price_html,
+            type: item.type
         }
         return (
             <ProductEl product={productObj} onPress={ () => {
